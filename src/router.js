@@ -12,6 +12,10 @@ export default new Router({
     },
     {
       path: '/',
+      redirect: '/home' // 重定向
+    },
+    {
+      path: '/home',
       name: 'home',
       component: Home
     }
