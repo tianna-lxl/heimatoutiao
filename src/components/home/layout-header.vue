@@ -1,6 +1,6 @@
 <template>
     <el-row type="flex" justify="space-between" class="layout-header">
-        <el-col :span="6" class="left">
+        <el-col :span="7" class="left">
             <i class="el-icon-s-unfold icon"></i>
             <span>江苏传智播客教育科技股份有限公司</span>
         </el-col>
