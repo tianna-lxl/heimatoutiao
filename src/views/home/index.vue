@@ -1,8 +1,12 @@
 <template>
   <el-container>
-    <el-aside>左侧</el-aside>
+    <el-aside style="width:200">
+      <layout-aside></layout-aside>
+    </el-aside>
     <el-container>
-      <el-header>头部</el-header>
+      <el-header>
+        <layout-header></layout-header>
+      </el-header>
       <el-main>主体</el-main>
     </el-container>
   </el-container>
