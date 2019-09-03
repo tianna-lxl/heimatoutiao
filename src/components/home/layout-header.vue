@@ -31,10 +31,10 @@ export default {
   },
   methods: {
     getUserInfo () {
-      let token = window.localStorage.getItem('user-token')
+      // let token = window.localStorage.getItem('user-token')
       this.$axios({
-        url: '/user/profile',
-        headers: { 'Authorization': `Bearer ${token}` }
+        url: '/user/profile'
+        // headers: { 'Authorization': `Bearer ${token}` }
       }).then(res => {
         this.userInfo = res.data.data
       }).catch(err => {
@@ -75,6 +75,7 @@ export default {
             align-items: center;
             img {
                 width: 40px;
+                height: 40px;
                 margin-right: 5px;
             }
         }
