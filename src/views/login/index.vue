@@ -71,9 +71,7 @@ export default {
           }).then(res => {
             window.localStorage.setItem('user-token', res.data.token)
             this.$router.push('/home')
-          }).catch()
-        } else {
-          this.$message({ type: 'warning', message: '验证码或手机号有误' })
+          })
         }
       })
     }
