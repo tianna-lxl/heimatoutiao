@@ -15,6 +15,7 @@
                     </el-card>
               </div>
           </el-tab-pane>
+
           <el-tab-pane label="收藏图片" name="collect">
               <div class="card-list">
                     <el-card class="img-card" v-for="item in list" :key="item.id">
@@ -23,6 +24,11 @@
               </div>
           </el-tab-pane>
       </el-tabs>
+
+      <el-row type="flex" justify="center" style="margin:10px 0">
+            <el-pagination @current-change="changePage" :current-page="page.page" :page-size="page.pageSize" :total="page.total" background layout="prev, pager, next"></el-pagination>
+      </el-row>
+
   </el-card>
 </template>
 
@@ -32,22 +38,35 @@ export default {
   data () {
     return {
       activeName: 'all',
-      list: []
+      list: [],
+      page: {
+        page: 1,
+        pageSize: 10,
+        total: 0
+      }
     }
   },
   methods: {
+    changePage (newPage) {
+      this.page.page = newPage
+      this.getMaterial()
+    },
     changeTab () {
       // this.activeName是点击时最新的状态
+      this.page.page = 1
       this.getMaterial()
     },
     getMaterial () {
       this.$axios({
         url: '/user/images',
         params: {
+          page: this.page.page,
+          per_page: this.page.pageSize,
           collect: this.activeName === 'collect'
         }
       }).then(res => {
         this.list = res.data.results
+        this.page.total = res.data.total_count
       })
     }
   },
@@ -65,7 +84,7 @@ export default {
             .img-card {
                 width: 180px;
                 height: 180px;
-                margin: 30px;
+                margin: 20px;
                 position: relative;
                 img {
                     width: 100%;
