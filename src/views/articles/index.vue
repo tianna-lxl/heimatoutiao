@@ -31,7 +31,7 @@
       </el-form>
 
       <div class="total-info">
-        共找到1459条符合条件的内容
+        共找到{{page.total}}条符合条件的内容
       </div>
       <div class="article-list">
         <div class="article-item" v-for="(item, index) in list" :key="index">
@@ -39,7 +39,7 @@
             <img :src="item.cover.images.length ? item.cover.images[0] : defaultImg" alt="">
             <div class="info">
               <span class="title">{{item.title}}</span>
-              <el-tag style="width:70px">{{item.status | statusText}}</el-tag>
+              <el-tag :type="item.status | statusType" style="width:70px">{{item.status | statusText}}</el-tag>
               <span class="date">{{item.pubdate}}</span>
             </div>
           </div>
@@ -49,6 +49,11 @@
           </div>
         </div>
       </div>
+
+      <el-row type="flex" justify="center" style="margin:10px 0">
+        <el-pagination @current-change="changePage" :current-page="page.page" :page-size="page.pageSize" :total="page.total" background layout="prev, pager, next"></el-pagination>
+      </el-row>
+
   </el-card>
 </template>
 
@@ -56,6 +61,11 @@
 export default {
   data () {
     return {
+      page: {
+        page: 1,
+        pageSize: 10,
+        total: 0
+      },
       list: [],
       defaultImg: require('../../assets/img/404.png'),
       searchForm: {
@@ -67,12 +77,22 @@ export default {
     }
   },
   methods: {
+    changePage (newPage) {
+      this.page.page = newPage
+      this.getCondition()
+    },
     changeCondition () {
+      this.page.page = 1
+      this.getCondition()
+    },
+    getCondition () {
       let params = {
         status: this.searchForm.status === 5 ? null : this.searchForm.status,
         channel_id: this.searchForm.channel_id,
         begin_pubdate: this.searchForm.dateRange.length > 0 ? this.searchForm.dateRange[0] : null,
-        end_pubdate: this.searchForm.dateRange.length > 1 ? this.searchForm.dateRange[1] : null
+        end_pubdate: this.searchForm.dateRange.length > 1 ? this.searchForm.dateRange[1] : null,
+        page: this.page.page,
+        per_page: this.page.pageSize
       }
       this.getArticles(params)
     },
@@ -89,6 +109,7 @@ export default {
         params
       }).then((res) => {
         this.list = res.data.results
+        this.page.total = res.data.total_count
       })
     }
   },
@@ -107,6 +128,20 @@ export default {
           return '已发表'
         case 3:
           return '审核失败'
+        default:
+          break
+      }
+    },
+    statusType (value) {
+      switch (value) {
+        case 0:
+          return 'warning'
+        case 1:
+          return 'info'
+        case 2:
+          return 'success'
+        case 3:
+          return 'danger'
         default:
           break
       }
