@@ -5,21 +5,25 @@
       </bread-crumb>
       <el-form>
         <el-form-item label="文章状态:">
-          <el-radio-group>
-            <el-radio>全部</el-radio>
-            <el-radio>草稿</el-radio>
-            <el-radio>待审核</el-radio>
-            <el-radio>审核通过</el-radio>
-            <el-radio>审核失败</el-radio>
+          <el-radio-group @change="changeCondition" v-model="searchForm.status">
+            <el-radio :label="5">全部</el-radio>
+            <el-radio :label="0">草稿</el-radio>
+            <el-radio :label="1">待审核</el-radio>
+            <el-radio :label="2">已发表</el-radio>
+            <el-radio :label="3">审核失败</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="频道列表:">
-          <el-select></el-select>
+          <el-select  @change="changeCondition" v-model="searchForm.channel_id">
+            <el-option :label="item.name" :value="item.id" v-for="item in channels" :key="item.id"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="时间选择:">
           <el-date-picker
-            type="datetimerange"
-            range-separator="至"
+          @change="changeCondition"
+          value-format="yyyy-MM-dd"
+          v-model="searchForm.dateRange"
+            type="daterange"
             start-placeholder="开始日期"
            end-placeholder="结束日期">
           </el-date-picker>
@@ -32,11 +36,11 @@
       <div class="article-list">
         <div class="article-item" v-for="(item, index) in list" :key="index">
           <div class="left">
-            <img src="../../assets/img/404.png" alt="">
+            <img :src="item.cover.images.length ? item.cover.images[0] : defaultImg" alt="">
             <div class="info">
-              <span class="title">有内鬼交易取消</span>
-              <el-tag style="width:60px">已发表</el-tag>
-              <span class="date">2019-3-1</span>
+              <span class="title">{{item.title}}</span>
+              <el-tag style="width:70px">{{item.status | statusText}}</el-tag>
+              <span class="date">{{item.pubdate}}</span>
             </div>
           </div>
           <div class="right">
@@ -52,7 +56,60 @@
 export default {
   data () {
     return {
-      list: [1, 2, 3, 4, 5]
+      list: [],
+      defaultImg: require('../../assets/img/404.png'),
+      searchForm: {
+        status: 5,
+        channel_id: null,
+        dateRange: []
+      },
+      channels: []
+    }
+  },
+  methods: {
+    changeCondition () {
+      let params = {
+        status: this.searchForm.status === 5 ? null : this.searchForm.status,
+        channel_id: this.searchForm.channel_id,
+        begin_pubdate: this.searchForm.dateRange.length > 0 ? this.searchForm.dateRange[0] : null,
+        end_pubdate: this.searchForm.dateRange.length > 1 ? this.searchForm.dateRange[1] : null
+      }
+      this.getArticles(params)
+    },
+    getChannels () {
+      this.$axios({
+        url: '/channels'
+      }).then((res) => {
+        this.channels = res.data.channels
+      })
+    },
+    getArticles (params) {
+      this.$axios({
+        url: '/articles',
+        params
+      }).then((res) => {
+        this.list = res.data.results
+      })
+    }
+  },
+  created () {
+    this.getArticles()
+    this.getChannels()
+  },
+  filters: {
+    statusText (value) {
+      switch (value) {
+        case 0:
+          return '草稿'
+        case 1:
+          return '待审核'
+        case 2:
+          return '已发表'
+        case 3:
+          return '审核失败'
+        default:
+          break
+      }
     }
   }
 }
