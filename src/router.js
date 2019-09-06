@@ -30,7 +30,7 @@ export default new Router({
         path: 'material',
         component: () => import('./views/material/index.vue')
       }, {
-        path: 'artical',
+        path: 'articles',
         component: () => import('./views/articles/index.vue')
       }]
     }
