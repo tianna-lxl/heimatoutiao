@@ -82,10 +82,21 @@ export default {
       }).then(res => {
         this.channels = res.data.channels
       })
+    },
+    getArticleById (articleId) {
+      this.$axios({
+        url: `/articles/${articleId}`
+      }).then(res => {
+        this.formData = res.data
+      })
     }
   },
   created () {
     this.getChannels()
+    let { articleId } = this.$route.params
+    if (articleId) {
+      this.getArticleById(articleId)
+    }
   }
 }
 </script>

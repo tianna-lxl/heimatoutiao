@@ -35,6 +35,9 @@ export default new Router({
       }, {
         path: 'publish',
         component: () => import('./views/publish/index.vue')
+      }, {
+        path: 'publish/:articleId',
+        component: () => import('./views/publish')
       }]
     }
     // {
