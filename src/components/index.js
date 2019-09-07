@@ -1,6 +1,7 @@
 import layoutAside from './home/layout-aside.vue'
 import layoutHeader from './home/layout-header.vue'
 import breadCrumb from './common/bread-crumb.vue'
+import coverImage from './publish/cover-image.vue'
 
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
@@ -13,5 +14,6 @@ export default {
     Vue.component('layout-header', layoutHeader)
     Vue.component('bread-crumb', breadCrumb)
     Vue.component('quill-editor', quillEditor)
+    Vue.component('cover-image', coverImage)
   }
 }
