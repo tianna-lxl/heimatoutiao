@@ -3,10 +3,15 @@ import Router from 'vue-router'
 import Login from './views/login'
 import Home from './views/home'
 import Main from './views/home/main.vue'
+import notFound from './views/404.vue'
 Vue.use(Router)
 
 export default new Router({
   routes: [
+    {
+      path: '*',
+      component: notFound
+    },
     {
       path: '/login',
       component: Login

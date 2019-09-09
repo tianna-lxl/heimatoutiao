@@ -1,7 +1,7 @@
 <template>
     <el-row type="flex" justify="space-between" class="layout-header">
         <el-col :span="7" class="left">
-            <i class="el-icon-s-unfold icon"></i>
+            <i @click="openOrClose" :class="{'el-icon-s-unfold' : close, 'el-icon-s-fold' : !close}" class="icon"></i>
             <span>江苏传智播客教育科技股份有限公司</span>
         </el-col>
         <el-col :span="3" class="right">
@@ -26,11 +26,16 @@ import eventBus from '../../utils/event'
 export default {
   data () {
     return {
+      close: false,
       userInfo: {},
       defaultImg: require('../../assets/img/avatar.jpg') // 转成base64位字符串
     }
   },
   methods: {
+    openOrClose () {
+      this.close = !this.close
+      eventBus.$emit('openOrClose', this.close)
+    },
     getUserInfo () {
       // let token = window.localStorage.getItem('user-token')
       this.$axios({
