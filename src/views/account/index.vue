@@ -1,8 +1,12 @@
 <template>
-  <el-card>
+  <el-card v-loading="loading">
       <bread-crumb slot="header">
           <template slot="title">账户信息</template>
       </bread-crumb>
+      <el-upload action="" :http-request="uploadHeadImg" :show-file-list="false">
+                                        <!-- userInfo.photo ? userInfo.photo : defaultImg -->
+          <img class="head-image" :src="userInfo.photo || defaultImg" alt="">
+      </el-upload>
       <el-form ref="userForm" :model="userInfo" :rules="userRules">
           <el-form-item label="用户名" prop="name">
               <el-input v-model="userInfo.name" style="width:300px"></el-input>
@@ -24,9 +28,12 @@
 </template>
 
 <script>
+import eventBus from '../../utils/event'
 export default {
   data () {
     return {
+      defaultImg: require('../../assets/img/404.png'),
+      loading: false,
       userInfo: {
         name: '',
         intro: '',
@@ -47,6 +54,20 @@ export default {
     }
   },
   methods: {
+    uploadHeadImg (params) {
+      this.loading = true
+      let data = new FormData()
+      data.append('photo', params.file)
+      this.$axios({
+        method: 'patch',
+        url: '/user/photo',
+        data
+      }).then(() => {
+        this.loading = false
+        eventBus.$emit('updateUserInfo')
+        this.getUserInfo()
+      })
+    },
     getUserInfo () {
       this.$axios({
         url: '/user/profile'
@@ -63,6 +84,7 @@ export default {
             data: this.userInfo
           }).then(() => {
             this.$message({ type: 'success', message: '保存成功' })
+            eventBus.$emit('updateUserInfo')
           })
         }
       })
@@ -74,6 +96,13 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang="less" scoped>
+  .head-image {
+    z-index: 1;
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    left: 620px;
+  }
 </style>
