@@ -10,7 +10,7 @@
           <el-form-item prop="content" label="内容">
               <quill-editor style="height:400px;width:800px"  v-model="formData.content" type="textarea"></quill-editor>
           </el-form-item>
-          <el-form-item label="封面" style="margin-top:120px">
+          <el-form-item label="封面" style="margin-top:120px" prop="cover">
               <el-radio-group @change="changeCoverType" v-model="formData.cover.type">
                   <el-radio :label="1">单图</el-radio>
                   <el-radio :label="3">三图</el-radio>
@@ -20,7 +20,7 @@
           </el-form-item>
 
           <el-form-item>
-            <cover-image :images="formData.cover.images"></cover-image>
+            <cover-image @onClickImg="receiveImg" :images="formData.cover.images"></cover-image>
           </el-form-item>
 
           <el-form-item prop="channel_id" label="频道">
@@ -39,6 +39,16 @@
 <script>
 export default {
   data () {
+    let func = function (rule, value, callBack) {
+      if (value.type === 1) {
+        value.images.length === 1 && value.images[0] ? callBack() : callBack(new Error('请设置封面'))
+      } else if (value.type === 3) {
+        value.images.length === 3 && value.images.some((item, index) => { return item }) ? callBack() : callBack(new Error('请设置封面'))
+        // value.images.length === 3 && value.images[0] && value.images[1] && value.images[2] ? callBack() : callBack(new Error('请设置封面'))
+      } else {
+        value.images.length > 0 ? callBack(new Error('弄啥嘞')) : callBack()
+      }
+    }
     return {
       channels: [],
       formData: {
@@ -62,11 +72,17 @@ export default {
         channel_id: [{
           required: true,
           message: '频道不能为空哦'
+        }],
+        cover: [{
+          validator: func
         }]
       }
     }
   },
   methods: {
+    receiveImg (url, index) {
+      this.formData.cover.images = this.formData.cover.images.map((item, i) => i === index ? url : item)
+    },
     changeCoverType () {
       if (this.formData.cover.type === 1) {
         this.formData.cover.images = ['']
