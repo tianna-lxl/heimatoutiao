@@ -40,32 +40,41 @@ export default {
       this.page.page = newPage
       this.getComments()
     },
-    openOrClose (row) {
+    async openOrClose (row) {
       let mess = row.comment_status ? '关闭' : '打开'
-      this.$confirm(`是否要${mess}评论？`, '提示').then(() => {
-        this.$axios({
-          url: '/comments/status',
-          method: 'put',
-          params: { article_id: row.id.toString() },
-          data: { allow_comment: !row.comment_status }
-        }).then(result => {
-          this.getComments()
-        })
+      await this.$confirm(`是否要${mess}评论？`, '提示')
+      await this.$axios({
+        url: '/comments/status',
+        method: 'put',
+        params: { article_id: row.id.toString() },
+        data: { allow_comment: !row.comment_status }
       })
+      this.getComments()
     },
     formatter (row) {
       return row.comment_status ? '正常' : '关闭'
     },
-    getComments () {
+    // getComments () {
+    //   this.loading = true
+    //   this.$axios({
+    //     url: '/articles',
+    //     params: { response_type: 'comment', page: this.page.page, per_page: this.page.pageSize }
+    //   }).then(res => {
+    //     this.loading = false
+    //     this.list = res.data.results
+    //     this.page.total = res.data.total_count
+    //   })
+    // }
+
+    async getComments () {
       this.loading = true
-      this.$axios({
+      let res = await this.$axios({
         url: '/articles',
         params: { response_type: 'comment', page: this.page.page, per_page: this.page.pageSize }
-      }).then(res => {
-        this.loading = false
-        this.list = res.data.results
-        this.page.total = res.data.total_count
       })
+      this.loading = false
+      this.list = res.data.results
+      this.page.total = res.data.total_count
     }
   },
   created () {

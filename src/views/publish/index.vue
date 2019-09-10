@@ -93,34 +93,48 @@ export default {
       }
     },
     publish (draft) {
-      this.$refs.publishFrom.validate(isOk => {
+      this.$refs.publishFrom.validate(async isOk => {
         if (isOk) {
           let { articleId } = this.$route.params
 
-          this.$axios({
+          await this.$axios({
             url: articleId ? `/articles/${articleId}` : '/articles',
             method: articleId ? 'put' : 'post',
             params: { draft },
             data: this.formData
-          }).then(res => {
-            this.$router.push('/home/articles')
           })
+          this.$router.push('/home/articles')
         }
       })
     },
-    getChannels () {
-      this.$axios({
+
+    // publish (draft) {
+    //   this.$refs.publishFrom.validate(isOk => {
+    //     if (isOk) {
+    //       let { articleId } = this.$route.params
+
+    //       this.$axios({
+    //         url: articleId ? `/articles/${articleId}` : '/articles',
+    //         method: articleId ? 'put' : 'post',
+    //         params: { draft },
+    //         data: this.formData
+    //       }).then(res => {
+    //         this.$router.push('/home/articles')
+    //       })
+    //     }
+    //   })
+    // },
+    async getChannels () {
+      let res = await this.$axios({
         url: '/channels'
-      }).then(res => {
-        this.channels = res.data.channels
       })
+      this.channels = res.data.channels
     },
-    getArticleById (articleId) {
-      this.$axios({
+    async getArticleById (articleId) {
+      let res = await this.$axios({
         url: `/articles/${articleId}`
-      }).then(res => {
-        this.formData = res.data
       })
+      this.formData = res.data
     }
   },
   created () {

@@ -49,28 +49,25 @@ export default {
     }
   },
   methods: {
-    uploadImg (params) {
+    async uploadImg (params) {
       let obj = new FormData()
       obj.append('image', params.file)
-      this.$axios({
+      await this.$axios({
         url: '/user/images',
         method: 'post',
         data: obj
-      }).then(() => {
-        this.getMaterial()
       })
+      this.getMaterial()
     },
-    collectOrCancel (item) {
+    async collectOrCancel (item) {
       let mess = item.is_collected ? '取消' : ''
-      this.$confirm(`确定要${mess}收藏吗？`, '提示').then(() => {
-        this.$axios({
-          url: `/user/images/${item.id}`,
-          method: 'put',
-          data: { collect: !item.is_collected }
-        }).then(() => {
-          this.getMaterial()
-        })
+      await this.$confirm(`确定要${mess}收藏吗？`, '提示')
+      await this.$axios({
+        url: `/user/images/${item.id}`,
+        method: 'put',
+        data: { collect: !item.is_collected }
       })
+      this.getMaterial()
     },
     delImg (item) {
       this.$confirm('确定要删除吗？', '提示').then(() => {
