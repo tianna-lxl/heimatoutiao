@@ -37,6 +37,7 @@
 </template>
 
 <script>
+import { getChannels } from '../../api/publish.js'
 export default {
   data () {
     let func = function (rule, value, callBack) {
@@ -107,27 +108,13 @@ export default {
         }
       })
     },
-
-    // publish (draft) {
-    //   this.$refs.publishFrom.validate(isOk => {
-    //     if (isOk) {
-    //       let { articleId } = this.$route.params
-
-    //       this.$axios({
-    //         url: articleId ? `/articles/${articleId}` : '/articles',
-    //         method: articleId ? 'put' : 'post',
-    //         params: { draft },
-    //         data: this.formData
-    //       }).then(res => {
-    //         this.$router.push('/home/articles')
-    //       })
-    //     }
-    //   })
-    // },
     async getChannels () {
-      let res = await this.$axios({
-        url: '/channels'
-      })
+      // let res = await this.$axios({
+      //   url: '/channels'
+      // })
+
+      let res = await getChannels()
+
       this.channels = res.data.channels
     },
     async getArticleById (articleId) {

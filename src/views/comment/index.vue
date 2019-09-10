@@ -22,6 +22,7 @@
 </template>
 
 <script>
+import { getComments, openOrClose } from '../../api/commit.js'
 export default {
   data () {
     return {
@@ -43,12 +44,15 @@ export default {
     async openOrClose (row) {
       let mess = row.comment_status ? '关闭' : '打开'
       await this.$confirm(`是否要${mess}评论？`, '提示')
-      await this.$axios({
-        url: '/comments/status',
-        method: 'put',
-        params: { article_id: row.id.toString() },
-        data: { allow_comment: !row.comment_status }
-      })
+      // await this.$axios({
+      //   url: '/comments/status',
+      //   method: 'put',
+      //   params: { article_id: row.id.toString() },
+      //   data: { allow_comment: !row.comment_status }
+      // })
+
+      await openOrClose({ article_id: row.id.toString() }, { allow_comment: !row.comment_status })
+
       this.getComments()
     },
     formatter (row) {
@@ -68,10 +72,12 @@ export default {
 
     async getComments () {
       this.loading = true
-      let res = await this.$axios({
-        url: '/articles',
-        params: { response_type: 'comment', page: this.page.page, per_page: this.page.pageSize }
-      })
+      // let res = await this.$axios({
+      //   url: '/articles',
+      //   params: { response_type: 'comment', page: this.page.page, per_page: this.page.pageSize }
+      // })
+
+      let res = await getComments({ response_type: 'comment', page: this.page.page, per_page: this.page.pageSize })
       this.loading = false
       this.list = res.data.results
       this.page.total = res.data.total_count
